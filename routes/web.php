@@ -15,3 +15,4 @@ Route::resource('task','TaskController');
 Route::get('/',function(){
     return redirect()->route('task.index');
 });
+

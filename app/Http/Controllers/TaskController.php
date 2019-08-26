@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Models\Task;
+use Telegram\Bot\Laravel\Facades\Telegram;
+use Carbon\Carbon;
 
 //use Illuminate\Database\Eloquent\Model;
 
@@ -17,15 +19,36 @@ class TaskController extends Controller
      */
     public function index()
     {
-        echo '<b><h1 style="color:blue;"> Приветствие:<br></h1>';
-        echo '<i>Добро пожаловать в страничку заметок.';
-        echo '<i>Мы рады видеть вас!!!';
+        
        // $tasks = Task::simplepaginate(3);
        //return view('tasks.index', compact('tasks'));
-        $task = Task::orderBy('to_do_date','asc')->paginate(5);
-        return view('tasks.index')->with('tasks',$task);
 
-    }
+            $task = Task::all();
+            //$id = -1001369245082;
+
+            $date = new Carbon();
+            foreach($task as $t){
+                $datetime1 = strtotime($date);
+                $datetime2 = strtotime($t->to_do_date);
+                $secs = $datetime2 - $datetime1;
+                $days = $secs / 86400;
+                if($days<10){
+                        $test = "$t->name\n"
+                        ."$t->description\n";
+                        Telegram::sendMessage([
+                            'chat_id' => env('TELEGRAM_CHANNEL_ID','-1001369245082'),
+                            'parse_mode' => 'HTML',
+                            'text' => $test
+    
+                        ]);
+                } 
+
+            }
+
+            $task = Task::orderBy('to_do_date','asc')->paginate(5);
+            return view('tasks.index')->with('tasks',$task);
+
+        }
 
     /**
      * Show the form for creating a new resource.
@@ -126,8 +149,8 @@ class TaskController extends Controller
     {
         $task = Task::find($id);
         $task->delete();
-        
+
+        Session::flash('success','Deleted Task Successully');
         return redirect()->route('task.index');
-        //return view('tasks.delete')->with('task',$task);
     }
 }

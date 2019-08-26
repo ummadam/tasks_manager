@@ -10,6 +10,8 @@
 </head>
 <body>
 <div class="container mt-3">
+    @include('layouts.welcome')
+    @include('errors.merror')
     @yield('content')
     
 
