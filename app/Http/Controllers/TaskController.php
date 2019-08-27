@@ -23,8 +23,7 @@ class TaskController extends Controller
        // $tasks = Task::simplepaginate(3);
        //return view('tasks.index', compact('tasks'));
 
-            $task = Task::all();
-            //$id = -1001369245082;
+            $task = Task::all();           
 
             $date = new Carbon();
             foreach($task as $t){
@@ -36,7 +35,7 @@ class TaskController extends Controller
                         $test = "$t->name\n"
                         ."$t->description\n";
                         Telegram::sendMessage([
-                            'chat_id' => env('TELEGRAM_CHANNEL_ID','-1001369245082'),
+                            'chat_id' => env('TELEGRAM_CHANNEL_ID','your_id'),
                             'parse_mode' => 'HTML',
                             'text' => $test
     
